@@ -3,20 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const { BrowserWindow, app } = require("electron");
-const { execSync } = require("child_process");
 const { compile } = require("./bytecode");
-
-const isWindow =
-  process.platform === "win32" || /^(msys|cygwin)$/.test(process.env.OSTYPE);
-
-function checkOrDownNapiCli(dir) {
-  const binPath = path.resolve(dir, "./node_modules/.bin/napi");
-  if (!fs.existsSync(binPath)) {
-    execSync("npm run install-napi", {
-      cwd: dir,
-    });
-  }
-}
 
 async function main() {
   // 输入目录，用于存放待编译的 js bundle
@@ -31,6 +18,8 @@ async function main() {
   const code = fs.readFileSync(mainJs);
 
   fs.writeFileSync(mainBinPath, compile(code));
+
+  console.log(app.getVersion());
 
   app && app.quit();
 
